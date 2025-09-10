@@ -116,9 +116,12 @@ mcsm_cmd_start () {
 		eval : \${mem_min:="1024M"}
 		eval : \${mem_max:="4096M"}
 
-		eval `cat ${jardir}/ver.conf`
-		jarname=spigot-${ver}.jar
-		jar=$jardir/$jarname
+		eval `cat $SERVERDIR/ver.conf`
+		eval "local serverjarver=\${ver}"
+
+		serverjarname="${serverjarver}.jar"
+
+		jar="${SERVERDIR}/versions/${serverjarver}/${serverjarname}"
 
 		cd "${SERVERDIR}" \
 		&& screen -h 1024 -dmS minecraft-${servername} java -Xms${mem_min} -Xmx${mem_max} -jar ${jar} nogui
@@ -204,20 +207,50 @@ mcsm_cmd_console () {
 }
 
 mcsm_cmd_update () {
-	ver=$1
-	if [ "$ver" == "" ]
+	servername=$1
+	ver=$2
+
+	if [ "$servername" == "" ]
 	then
-		echo "$cmd VERSION"
-		echo "example) $cmd 1.12"
+		echo "$cmd SERVERNAME VERSION"
+		echo "example) $cmd SERVERNAME 1.19"
 		exit 1
 	fi
 
-	mkdir -p "${jardir}"
-	cd "${jardir}" \
-	&& fetch https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar \
-	&& java -jar BuildTools.jar --rev $ver
+	if [ "$ver" == "" ]
+	then
+		echo "$cmd SERVERNAME VERSION"
+		echo "example) $cmd $servername 1.19"
+		exit 1
+	fi
+	
+	serverdir=`mcsm_func_validate_servername $servername`
+	if [ "$?" != "0" ]; then exit 1; fi
 
-	echo "ver=$ver" > ${jardir}/ver.conf
+	versions=`curl https://qing762.is-a.dev/api/papermc | jq -c`
+	echo "$versions" > ${serverdir}/versions/temp.json
+
+	if [ "$ver" == "latest" ]
+	then
+		latestver=`cat ${serverdir}/versions/temp.json | jq '.latest' | sed 's/"//g'`
+	
+		selectedver=$latestver
+	else
+		selectedver=$ver
+	fi
+
+	echo "$selectedver"
+
+	mkdir -p "${serverdir}/versions/${selectedver}"
+	cd "${serverdir}/versions/${selectedver}"
+
+	verurl=`cat ${serverdir}/versions/temp.json | jq --arg key "$selectedver" '.versions.[$key]' | sed 's/"//g'`
+
+	echo "$verurl"
+
+	curl $verurl -o "${selectedver}.jar"
+
+	echo "ver=$selectedver" > ${serverdir}/ver.conf
 
 	exit	0
 }
