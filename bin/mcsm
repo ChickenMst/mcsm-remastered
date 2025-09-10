@@ -21,7 +21,7 @@ eval `cat $conffile`
 # OUT) "" OR "PID"
 mcsm_func_isalive () {
 	local	servername=$1
-	local	PID=$(screen -list | grep minecraft-${servername} | sed -r 's/^[^0-9]*([0-9]+).*$/\1/')
+	local	PID=$(/usr/local/bin/screen -list | grep minecraft-${servername} | sed -r 's/^[^0-9]*([0-9]+).*$/\1/')
 	echo $PID
 }
 
@@ -124,7 +124,7 @@ mcsm_cmd_start () {
 		jar="${SERVERDIR}/versions/${serverjarver}/${serverjarname}"
 
 		cd "${SERVERDIR}" \
-		&& screen -h 1024 -dmS minecraft-${servername} java -Xms${mem_min} -Xmx${mem_max} -jar ${jar} nogui
+		&& /usr/local/bin/screen -h 1024 -dmS minecraft-${servername} java -Xms${mem_min} -Xmx${mem_max} -jar ${jar} nogui
 
 	done
 	exit 0
@@ -146,7 +146,7 @@ mcsm_cmd_stop () {
 		if [ "$PID" != "" ]
 		then
 			echo "Stopping '$servername' please wait for about 30 seconds."
-			screen -S minecraft-${servername}  -X eval 'stuff "stop\015"'
+			/usr/local/bin/screen -S minecraft-${servername}  -X eval 'stuff "stop\015"'
 			while ps -p $PID > /dev/null
 			do
 				/bin/sleep 1
@@ -200,7 +200,7 @@ mcsm_cmd_console () {
 		echo "$servername is not active"
 		exit	1
 	fi
-	screen -r minecraft-$servername
+	/usr/local/etc/screen -r minecraft-$servername
 
 
 	exit	0
