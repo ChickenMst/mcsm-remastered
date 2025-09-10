@@ -146,7 +146,7 @@ mcsm_cmd_stop () {
 		if [ "$PID" != "" ]
 		then
 			echo "Stopping '$servername' please wait for about 30 seconds."
-			tmux send-keys -t minecraft-${servername} stop C-m
+			/usr/local/bin/tmux send-keys -t minecraft-${servername} stop C-m
 			while ps -p $PID > /dev/null
 			do
 				/bin/sleep 1
