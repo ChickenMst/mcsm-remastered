@@ -1,36 +1,34 @@
-# mcsm
+# mcsm-remastered
 
 Minecraft server management script for FreeBSD.
 
 ## 1. INSTALL
 
 ```sh
-$ pkg install git screen openjdk18
-$ git clone git@github.com:isaponsoft/mcsm.git mcsm
-$ cd mcsm/build/freebsd
+$ pkg install git tmux curl jq
+## Make sure to install the correct java version: openjdk<java_version> eg: openjdk21
+$ git clone git@github.com:ChickenMst/mcsm-remastered.git mcsm-remastered
+$ cd mcsm-remastered/build/freebsd
 $ make install
 ```
 
 ## 2. Update server program
 
 ```sh
-$ mcsm update 1.19
-...
-...
-Copying spigot-1.19-R0.1-SNAPSHOT-bootstrap.jar to /var/games/minecraft/prog/./spigot-1.19.jar
-  - Saved as ./spigot-1.19.jar
+$ mcsm update SERVERNAME 1.19
 ```
 
 
 ## Create & Start
 
 ```sh
-$ mcsm create MYWORLD
-Create server dir '/var/games/minecraft/servers/MYWORLD'.
-/var/games/minecraft/servers/MYWORLD/mcsm.conf
+$ mcsm create SERVERNAME
+Created server dir '/var/games/minecraft/servers/SERVERNAME'.
+/var/games/minecraft/servers/SERVERNAME/mcsm.conf
 $ mcsm start MYWORLD
-Wakeup MYWORLD.
+Wakeup SERVERNAME.
 ```
+
 
 ## Status
 
@@ -44,17 +42,23 @@ $ mcsm status
 ## Server console
 
 ```sh
-$ mcsm console MYWORLD
+$ mcsm console SERVERNAME
 ```
 
-exit console : Ctrl+a => d
+exit console : Ctrl+b => d
 
 
 ## Stop
 
 ```sh
-$ mcsm stop MYWORLD
-Stopping 'MYWORLD' please wait for about 30 seconds.
+$ mcsm stop SERVERNAME
+Stopping 'SERVERNAME' please wait for about 30 seconds.
+```
+
+## Stop all
+
+```sh
+$ mcsm stop all
 ```
 
 
@@ -62,4 +66,5 @@ Stopping 'MYWORLD' please wait for about 30 seconds.
 
 ```sh
 $ service mcsm enable
+## 
 ```
