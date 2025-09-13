@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # PROVIDE: mcsm
-# REQUIRE: LOGIN FILESYSTEM
+# REQUIRE: LOGIN
 # KEYWORD: shutdown
 
 #
@@ -33,7 +33,7 @@ path=$path:/usr/local/bin
 export path
 
 do_start () {
-	$_command start
+	$_command start all
 }
 
 do_stop () {

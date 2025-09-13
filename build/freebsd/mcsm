@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # PROVIDE: mcsm
-# REQUIRE: LOGIN FILESYSTEMS tmp sh
+# REQUIRE: LOGIN
 # KEYWORD: shutdown
 
 #
@@ -29,12 +29,15 @@ load_rc_config "$name"
 
 : ${mcsm_enable="NO"}
 
+path=$path:/usr/local/bin
+export path
+
 do_start () {
-	$_command start
+	$_command start all
 }
 
 do_stop () {
-	$_command stop
+	$_command stop all
 }
 
 do_status () {

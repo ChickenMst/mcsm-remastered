@@ -85,8 +85,44 @@ mcsm_cmd_create () {
 	exit	0
 }
 
-
 mcsm_cmd_start () {
+	servername=$1
+	if [ "$servername" == "" ]
+	then
+		echo "$cmd SERVERNAME"
+	fi
+
+	PID=`mcsm_func_isalive $servername`
+	if [ "$PID" == "" ]
+	then
+	fi
+
+	SERVERDIR=`mcsm_func_validate_servername $servername`
+	if [ "$?" != "0" ]; then exit 1; fi
+
+	if [ -f "$SERVERDIR/mcsm.conf" ]
+	then
+		eval `cat $SERVERDIR/mcsm.conf`
+	fi
+	echo "Wakeup $servername."
+
+	eval "local mem_min=\${${servername}_mem_min}"
+	eval "local mem_max=\${${servername}_mem_max}"
+	eval : \${mem_min:="1024M"}
+	eval : \${mem_max:="4096M"}
+
+	eval `cat $SERVERDIR/ver.conf`
+	eval "local serverjarver=\${ver}"
+
+	serverjarname="${serverjarver}.jar"
+
+	jar="${SERVERDIR}/versions/${serverjarver}/${serverjarname}"
+	cd "${SERVERDIR}"
+	/usr/local/bin/tmux new -d -s "minecraft-${servername}" "/usr/local/bin/java -Xms${mem_min} -Xmx${mem_max} -jar ${jar} nogui; tmux kill-session -t minecraft-${servername}"
+	exit 0
+}
+
+mcsm_cmd_start_all () {
 	SERVERS=`mcsm_func_server_args $*`
 	if [ "$?" != "0" ]; then exit 1; fi
 	if [ "$SERVERS" = "" ]
@@ -124,7 +160,7 @@ mcsm_cmd_start () {
 		jar="${SERVERDIR}/versions/${serverjarver}/${serverjarname}"
 
 		cd "${SERVERDIR}"
-		/usr/local/bin/tmux new-session -d -s "minecraft-${servername}" "java -Xms${mem_min} -Xmx${mem_max} -jar ${jar} nogui; tmux kill-session -t minecraft-${servername}"
+		/usr/local/bin/tmux new -d -s "minecraft-${servername}" "/usr/local/bin/java -Xms${mem_min} -Xmx${mem_max} -jar ${jar} nogui; tmux kill-session -t minecraft-${servername}"
 
 	done
 	exit 0
@@ -132,6 +168,29 @@ mcsm_cmd_start () {
 
 
 mcsm_cmd_stop () {
+	servername=$1
+	if [ "$servername" == "" ]
+	then
+		echo "$cmd SERVERNAME"
+		exit 1
+	fi
+	serverdir=`mcsm_func_validate_servername $servername`
+	if [ "$?" != "0" ]; then exit 1; fi
+
+	PID=`mcsm_func_isalive $servername`
+	if [ "$PID" != "" ]
+	then
+		echo "Stopping '$servername' please wait for about 30 seconds."
+		/usr/local/bin/tmux send-keys -t minecraft-${servername} stop C-m
+		while ps -p $PID > /dev/null
+		do
+			/bin/sleep 1
+		done
+	fi
+	exit 0	
+}
+
+mcsm_cmd_stop_all () {
 	SERVERS=`mcsm_func_server_args $*`
 	if [ "$?" != "0" ]; then exit 1; fi
 	if [ "$SERVERS" = "" ]
@@ -158,7 +217,6 @@ mcsm_cmd_stop () {
 
 
 mcsm_cmd_status () {
-
 	SERVERS=`mcsm_func_server_args $*`
 	if [ "$?" != "0" ]; then exit 1; fi
 	if [ "$SERVERS" = "" ]
@@ -272,12 +330,28 @@ fi
 
 if [ "$cmd" == "start" ]
 then
+	if [ "$1" == "all" ]
+	then
+		mcsm_cmd_start_all
+	else
+		mcsm_cmd_start $*
+	fi
+fi
+
+if [ "$cmd" == "boot" ]
+then
+	mcsm_cmd_boot $*	
 	mcsm_cmd_start $*
 fi
 
 if [ "$cmd" == "stop" ]
 then
-	mcsm_cmd_stop $*
+	if [ "$1" == "all" ]
+	then
+		mcsm_cmd_stop_all
+	else
+		mcsm_cmd_stop $*
+	fi
 fi
 
 if [ "$cmd" == "status" ]
