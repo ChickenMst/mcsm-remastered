@@ -2,7 +2,7 @@
 
 Minecraft server management script for FreeBSD.
 
-## 1. INSTALL
+## 1. Install
 
 ```sh
 $ pkg install git tmux curl jq
@@ -12,20 +12,19 @@ $ cd mcsm-remastered/build/freebsd
 $ make install
 ```
 
-## 2. Update server program
-
-```sh
-$ mcsm update SERVERNAME 1.19
-```
-
-
-## Create & Start
+## 2. Create & Update
 
 ```sh
 $ mcsm create SERVERNAME
-Created server dir '/var/games/minecraft/servers/SERVERNAME'.
-/var/games/minecraft/servers/SERVERNAME/mcsm.conf
-$ mcsm start MYWORLD
+$ mcsm update SERVERNAME VERSION
+## Either latest or the version number eg: 1.21.2
+```
+
+
+## Start
+
+```sh
+$ mcsm start SERVERNAME
 Wakeup SERVERNAME.
 ```
 
@@ -35,7 +34,7 @@ Wakeup SERVERNAME.
 ```sh
 $ mcsm status
    PID  Servername
- 70635  MYWORLD
+ 70635  SERVERNAME
 ```
 
 
@@ -65,6 +64,6 @@ $ mcsm stop all
 ## Auto start & Auto stop
 
 ```sh
+## The service runs as root, so please read the posible consequences provided by papermc
 $ service mcsm enable
-## 
 ```
