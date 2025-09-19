@@ -12,7 +12,7 @@ $ cd mcsm-remastered/build/freebsd
 $ make install
 ```
 
-## 2. Create & Update
+## 2. Create & Update Server
 
 ```sh
 $ mcsm create SERVERNAME
@@ -21,7 +21,7 @@ $ mcsm update SERVERNAME VERSION
 ```
 
 
-## Start
+## Start Server
 
 ```sh
 $ mcsm start SERVERNAME
@@ -47,14 +47,14 @@ $ mcsm console SERVERNAME
 exit console : Ctrl+b => d
 
 
-## Stop
+## Stop Server
 
 ```sh
 $ mcsm stop SERVERNAME
 Stopping 'SERVERNAME' please wait for about 30 seconds.
 ```
 
-## Stop all
+## Stop All Servers
 
 ```sh
 $ mcsm stop all
@@ -64,6 +64,6 @@ $ mcsm stop all
 ## Auto start & Auto stop
 
 ```sh
-## The service runs as root, so please read the posible consequences provided by papermc
 $ service mcsm enable
+## The service runs as root, so please read the posible consequences provided by papermc
 ```
