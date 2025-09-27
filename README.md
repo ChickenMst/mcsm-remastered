@@ -19,6 +19,10 @@ $ mcsm create SERVERNAME
 $ mcsm update SERVERNAME VERSION
 ## Either latest or the version number eg: 1.21.2
 ```
+or
+```sh
+$ mcsm create SERVERNAME VERSION
+```
 
 
 ## Start Server
