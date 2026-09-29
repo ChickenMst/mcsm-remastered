@@ -9,7 +9,7 @@ $ pkg install git tmux curl jq
 ## Make sure to install the correct java version: openjdk<java_version> eg: openjdk21
 $ git clone git@github.com:ChickenMst/mcsm-remastered.git mcsm-remastered
 $ cd mcsm-remastered/build/freebsd
-$ make install
+$ make clean mcsm install
 ```
 
 ## 2. Create & Update Server
