@@ -402,7 +402,7 @@ mcsm_cmd_update () {
 		cd "${serverdir}/versions/${FOUND_VERSION}"
 		curl -o "${FOUND_VERSION}.jar" $PAPERMC_URL
 		echo "Download completed (version: $FOUND_VERSION)"
-		echo "ver=$selectedver" > ${serverdir}/ver.conf
+		echo "ver=$FOUND_VERSION" > ${serverdir}/ver.conf
 		exit 0
 	else
 		echo "No stable builds available for any version :("
